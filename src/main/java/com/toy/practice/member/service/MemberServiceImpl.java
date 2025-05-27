@@ -16,6 +16,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
+    // 서비스 계층에서
+
     @Override
     @Transactional
     public Long register(String id, String name, String email, String password) {
@@ -58,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
         if(memberRepository.existsById(id)){
             MemberException.duplicatedMemberId();
         }
-        if(memberRepository.existsById(email)){
+        if(memberRepository.existsByEmail(email)){
             MemberException.duplicatedMemberEmail();
         }
     }

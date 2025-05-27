@@ -2,15 +2,14 @@ package com.toy.practice.member.model;
 
 import com.toy.practice.common.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(
         name = "MEMBER"
 )
@@ -32,12 +31,13 @@ public class Member extends BaseEntity {
     private String password;
     @Column(name = "EMAIL", nullable = false, length = 30, unique = true)
     private String email;
+    @Builder.Default
     @Column(name = "IS_ACTIVE", nullable = false)
     private boolean active = true;
+    @Builder.Default
     @Column(name = "IS_EMAIL_VERIFIED", nullable = false)
     private boolean emailVerified = false;
 
-    @Builder
     public static Member createMember(String id, String name, String password, String email) {
         return Member.builder()
                 .id(id)
@@ -46,6 +46,7 @@ public class Member extends BaseEntity {
                 .email(email)
                 .build();
     }
+
     public void activate(){
         this.active = true;
     }
