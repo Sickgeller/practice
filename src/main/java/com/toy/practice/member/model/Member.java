@@ -16,20 +16,22 @@ import lombok.*;
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
         sequenceName = "MEMBER_SEQ",
-        initialValue = 1, allocationSize = 255
+        initialValue = 1,
+        allocationSize = 1
 )
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "MEMBER_SEQ")
-    @Column(name = "MEMBER_ID" , length = 255, nullable = false)
+    @Id 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
+    @Column(name = "MEMBER_ID", nullable = false)
     private Long memberId;
     @Column(name = "ID", nullable = false, unique = true, length = 30)
     private String id;
-    @Column(name = "NAME", nullable = false, length = 3)
+    @Column(name = "NAME", nullable = false, length = 8)
     private String name;
-    @Column(name = "PASSWORD", nullable = false, length = 20)
+    @Column(name = "PASSWORD", nullable = false, length = 100)
     private String password;
-    @Column(name = "EMAIL", nullable = false, length = 30, unique = true)
+    @Column(name = "EMAIL", nullable = false, length = 100, unique = true)
     private String email;
     @Builder.Default
     @Column(name = "IS_ACTIVE", nullable = false)
@@ -57,5 +59,10 @@ public class Member extends BaseEntity {
 
     public void changePassword(String newPassword){
         this.password = newPassword;
+    }
+
+    public void update(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 }

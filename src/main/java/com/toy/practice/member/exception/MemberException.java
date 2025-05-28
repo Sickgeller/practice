@@ -4,19 +4,39 @@ import com.toy.practice.common.exception.BusinessException;
 import com.toy.practice.common.exception.ErrorCode;
 
 public class MemberException extends BusinessException {
-
-    public MemberException(String message, ErrorCode errorCode, String detail) {
-        super(message, errorCode, detail);
+    private MemberException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
     }
 
-    public static void duplicatedMemberId(){
-        ErrorCode error = ErrorCode.DUPLICATED_MEMBER_ID;
-        throw new MemberException(error.getMessage(), error, error.getCode());
+    private MemberException(ErrorCode errorCode, String detail, Throwable cause) {
+        super(errorCode, detail, cause);
     }
 
-    public static void duplicatedMemberEmail(){
-        ErrorCode error = ErrorCode.DUPLICATED_MEMBER_EMAIL;
-        throw new MemberException(error.getMessage(), error, error.getCode());
+    public static MemberException duplicatedMemberId() {
+        return new MemberException(
+            ErrorCode.DUPLICATED_MEMBER_ID,
+            "Member ID already exists"
+        );
     }
 
+    public static MemberException duplicatedMemberEmail() {
+        return new MemberException(
+            ErrorCode.DUPLICATED_MEMBER_EMAIL,
+            "Member email already exists"
+        );
+    }
+
+    public static MemberException loginFailed() {
+        return new MemberException(
+            ErrorCode.LOGIN_FAILED,
+            "Invalid login credentials"
+        );
+    }
+
+    public static MemberException memberNotFound(Long memberId) {
+        return new MemberException(
+            ErrorCode.MEMBER_NOT_FOUND,
+            String.format("Member not found with id: %d", memberId)
+        );
+    }
 }

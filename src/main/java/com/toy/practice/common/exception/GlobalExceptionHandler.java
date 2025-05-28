@@ -1,5 +1,6 @@
 package com.toy.practice.common.exception;
 
+import com.toy.practice.common.response.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,10 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e
     ) {
         String errorMessage = e.getBindingResult().getAllErrors().stream()
@@ -28,26 +27,22 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
 
         return ResponseEntity.badRequest()
-                .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, errorMessage));
+                .body(ApiResponse.error(errorMessage));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
         ErrorCode errorCode = e.getErrorCode();
-        return new ResponseEntity<>(
-                ErrorResponse.of(errorCode, e.getMessage()),
-                errorCode.getStatus()
-        );
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ApiResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         log.error("Unexpected error occurred", e);
         return ResponseEntity.internalServerError()
-                .body(ErrorResponse.of(
-                        ErrorCode.INTERNAL_SERVER_ERROR,
-                        "서버 내부 오류가 발생했습니다. 관리자에게 문의해주세요."
-                ));
+                .body(ApiResponse.error("서버 내부 오류가 발생했습니다. 관리자에게 문의해주세요."));
     }
 
     @Getter

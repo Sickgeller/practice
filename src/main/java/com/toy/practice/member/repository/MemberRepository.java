@@ -2,9 +2,11 @@ package com.toy.practice.member.repository;
 
 import com.toy.practice.member.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     /**
      * 고유식별 Id가 아니라 텍스트 Id로 멤버가 조회하는지 보는 메서드 (중복)
@@ -25,7 +27,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @param memberId
      * @return 검색된 멤버
      */
-    Optional<Member> findByMemberid(Long memberId);
+    Optional<Member> findByMemberId(Long memberId);
 
     /**
      * 그냥 Id로 멤버 검색

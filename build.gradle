@@ -48,4 +48,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// Oracle JDBC Driver
+	implementation 'com.oracle.database.jdbc:ojdbc8:21.9.0.0'
 }

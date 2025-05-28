@@ -12,8 +12,8 @@ public class MemberResponse {
 
     private Long memberId;
     private String id;
-    private String password;
     private String email;
+    private String name;
     private Boolean active;
     private Boolean emailVerified;
     private LocalDateTime createdAt;
@@ -23,7 +23,7 @@ public class MemberResponse {
             return MemberResponse.builder()
                     .memberId(member.getMemberId())
                     .id(member.getId())
-                    .password(member.getPassword())
+                    .name(member.getName())
                     .email(member.getEmail())
                     .active(member.isActive())
                     .emailVerified(member.isEmailVerified())

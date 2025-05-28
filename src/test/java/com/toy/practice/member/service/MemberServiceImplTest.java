@@ -6,6 +6,7 @@ import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
 import com.toy.practice.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,14 @@ class MemberServiceImplTest {
     private MemberRepository memberRepository;
     @InjectMocks
     private MemberServiceImpl memberService;
+
+    private Member member = Member.builder()
+            .memberId(1L)  // 테스트용 ID 설정
+            .id("testId")
+            .name("testName")
+            .email("test@email.com")
+            .password("encodedPassword")
+            .build();
 
     @Test
     @DisplayName("Register - Success")
@@ -135,10 +144,51 @@ class MemberServiceImplTest {
 
     @Test
     void findById() {
+        //given
+        memberRepository.save(member);
+        Member expectedMember = Member.builder()
+                .memberId(1L)  // 테스트용 ID 설정
+                .id("testId")
+                .name("testName")
+                .email("test@email.com")
+                .password("encodedPassword")
+                .build();
+        when(memberRepository.findById("testId")).thenReturn(Optional.of(expectedMember));
+        //when
+        Member foundMember = memberRepository.findById("testId").get();
+
+        //then
+        assertThat(foundMember).isNotNull();
+        assertThat(foundMember.getMemberId()).isEqualTo(1L);
+        assertThat(foundMember.getId()).isEqualTo("testId");
+
+        verify(memberRepository, times(1)).findById("testId");
     }
 
     @Test
     void changePassword() {
+        // given
+        // 1. 테스트용 회원 생성
+        Member member = Member.builder()
+                .memberId(1L)
+                .id("testUser")
+                .name("홍길동")
+                .email("test@example.com")
+                .password("oldEncodedPassword")
+                .build();
+
+        String newRawPassword = "newPassword123!";
+
+        // when
+        member.changePassword(newRawPassword);
+
+        // then
+        // 3. 비밀번호가 올바르게 변경되었는지 검증
+        assertThat(member.getPassword()).isEqualTo(newRawPassword);
+
+        // 4. 저장 로직이 호출되었는지 검증 (선택사항)
+        // 만약 changePassword 내부에서 저장 로직을 호출한다면
+        // verify(memberRepository, times(1)).save(member);
     }
 
     @Test
