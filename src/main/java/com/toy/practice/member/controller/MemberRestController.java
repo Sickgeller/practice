@@ -7,7 +7,6 @@ import com.toy.practice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +43,11 @@ public class MemberRestController {
         ));
     }
 
+    @GetMapping("/check-login")
+    public ResponseEntity<ApiResponse<Boolean>> checkLogin() {
+        return ResponseEntity.ok(ApiResponse.success(true, "로그인 상태입니다."));
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponse<List<MemberResponse>>> getAllMembers() {
         List<MemberResponse> members = memberService.findAll().stream()
@@ -73,5 +77,17 @@ public class MemberRestController {
     public ResponseEntity<ApiResponse<Void>> deleteMember(@PathVariable Long memberId) {
         memberService.delete(memberId);
         return ResponseEntity.ok(ApiResponse.ok("회원이 삭제되었습니다."));
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailDuplicate(@RequestParam String email) {
+        boolean isAvailable = !memberService.existsByEmail(email);
+        return ResponseEntity.ok(ApiResponse.success(isAvailable));
+    }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<ApiResponse<Boolean>> checkIdDuplicate(@RequestParam String id) {
+        boolean isAvailable = !memberService.existsById(id);
+        return ResponseEntity.ok(ApiResponse.success(isAvailable));
     }
 }

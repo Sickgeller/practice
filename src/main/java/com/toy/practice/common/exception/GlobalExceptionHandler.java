@@ -1,62 +1,24 @@
 package com.toy.practice.common.exception;
 
-import com.toy.practice.common.response.ApiResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
-
-@RestControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException e
-    ) {
-        String errorMessage = e.getBindingResult().getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(", "));
-
-        return ResponseEntity.badRequest()
-                .body(ApiResponse.error(errorMessage));
-    }
-
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.error(e.getMessage()));
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
+        log.error("excepted error occurred", e);
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(ErrorResponse.of(e.getErrorCode()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("Unexpected error occurred", e);
-        return ResponseEntity.internalServerError()
-                .body(ApiResponse.error("서버 내부 오류가 발생했습니다. 관리자에게 문의해주세요."));
-    }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    public static class ErrorResponse {
-        private String code;
-        private String message;
-
-        public static ErrorResponse of(ErrorCode errorCode, String message) {
-            return ErrorResponse.builder()
-                    .code(errorCode.getCode())
-                    .message(StringUtils.hasText(message) ? message : errorCode.getMessage())
-                    .build();
-        }
+        ErrorCode error = ErrorCode.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(error.getStatus()).body(ErrorResponse.of(error));
     }
 }

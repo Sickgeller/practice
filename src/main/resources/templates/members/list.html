@@ -54,9 +54,9 @@
                 <td th:text="${member.name}"></td>
                 <td th:text="${member.email}"></td>
                 <td class="action-buttons">
-                    <a th:href="@{'/members/detail/' + ${member.memberId}}" class="btn btn-view">상세보기</a>
-                    <a th:href="@{'/members/edit/' + ${member.memberId}}" class="btn btn-edit">수정</a>
-                    <form th:action="@{'/members/delete/' + ${member.memberId}}" method="post" style="display: inline;">
+                    <a th:href="@{/members/detail(memberId=${member.memberId})}" class="btn btn-view">상세보기</a>
+                    <a th:href="@{/members/edit(memberId=${member.memberId})}" class="btn btn-edit">수정</a>
+                    <form th:action="@{/members/delete(memberId=${member.memberId})}" method="post" style="display: inline;">
                         <input type="hidden" name="_method" value="delete"/>
                         <button type="submit" class="btn btn-delete" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
                     </form>

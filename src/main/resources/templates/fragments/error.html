@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>에러처리</title>
+    <th:block th:fragment="style">
+        <style>
+            .error-message {
+                color: #dc3545;
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+            }
+            .field-error {
+                border-color: #dc3545 !important;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="script">
+        <style>
+            .toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background-color: #dc3545;
+                color: white;
+                border-radius: 4px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                z-index: 1000;
+                display: none;
+            }
+        </style>
+        <div id="toast" class="toast"></div>
+        <script th:inline="javascript">
+            // ErrorResponse 클래스 정의
+            class ErrorResponse {
+                constructor(message, errors = []) {
+                    this.message = message;
+                    this.errors = errors;
+                }
+
+                static createErrorResponse(message, errors = []) {
+                    return new ErrorResponse(message, errors);
+                }
+            }
+
+            // 에러 메시지 표시 함수
+            function showError(message) {
+                const toast = document.getElementById('toast');
+                if (!toast) {
+                    console.error('Toast element not found');
+                    return;
+                }
+                toast.textContent = message;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+
+            // 필드 에러 표시 함수
+            function showFieldError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.classList.add('field-error');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.id = `${fieldId}-error`;
+                    errorDiv.textContent = message;
+                    field.parentNode.appendChild(errorDiv);
+                }
+            }
+
+            // 에러 초기화 함수
+            function clearErrors() {
+                // 토스트 메시지 초기화
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.style.display = 'none';
+                    toast.textContent = '';
+                }
+
+                // 필드 에러 초기화
+                document.querySelectorAll('.field-error').forEach(field => {
+                    field.classList.remove('field-error');
+                });
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.remove();
+                });
+            }
+
+            // API 에러 처리 함수
+            function handleApiError(error) {
+                if (error instanceof ErrorResponse) {
+                    if (error.errors && error.errors.length > 0) {
+                        error.errors.forEach(err => {
+                            showFieldError(err.field, err.message);
+                        });
+                    } else {
+                        showError(error.message);
+                    }
+                } else {
+                    showError('처리 중 오류가 발생했습니다.');
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

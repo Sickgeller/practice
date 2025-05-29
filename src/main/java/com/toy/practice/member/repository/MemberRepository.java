@@ -31,6 +31,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     /**
      * 그냥 Id로 멤버 검색
+     *
      * @param id
      * @return 검색된 멤버
      */

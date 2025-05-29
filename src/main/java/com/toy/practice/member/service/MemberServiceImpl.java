@@ -1,12 +1,11 @@
 package com.toy.practice.member.service;
 
-import com.toy.practice.common.exception.BusinessException;
-import com.toy.practice.common.exception.ErrorCode;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
 import com.toy.practice.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +16,14 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public Long register(String id, String name, String email, String password) {
+        String newPassword = passwordEncoder.encode(password);
         validateDuplicateMember(id, email);
-        Member member = Member.createMember(id, name, password, email);
+        Member member = Member.createMember(id, name, newPassword, email);
         return memberRepository.save(member).getMemberId();
     }
 
@@ -36,7 +37,22 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> MemberException.memberNotFound(memberId));
+                .orElseThrow(MemberException::memberNotFound);
+    }
+
+    @Override
+    @Transactional
+    public Member findById(String id) {
+        return memberRepository.findById(id)
+                .orElseThrow(MemberException::memberNotFound);
+
+    }
+
+    @Override
+    @Transactional
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(MemberException::memberNotFound);
     }
 
     @Override
@@ -88,13 +104,23 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Member login(String id, String password) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> MemberException.loginFailed());
+                .orElseThrow(MemberException::loginFailed);
 
         if (!member.getPassword().equals(password)) {
             throw MemberException.loginFailed();
         }
 
         return member;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return memberRepository.existsById(id);
     }
 
     private void validateDuplicateMember(String id, String email) {

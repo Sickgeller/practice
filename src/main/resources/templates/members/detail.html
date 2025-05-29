@@ -45,8 +45,8 @@
             </div>
         </div>
         <div>
-            <button class="btn btn-edit" th:onclick="|location.href='@{/members/edit/${id}(id=${member.memberId})}'|">수정</button>
-            <button class="btn btn-back" th:onclick="|location.href='@{/members/list}'|">목록으로</button>
+            <button class="btn btn-edit" th:onclick="|location.href='@{/members/edit(memberId=${member.memberId})}'|">수정</button>
+            <button class="btn btn-back" th:onclick="|location.href='@{/members}'|">목록으로</button>
         </div>
     </div>
 </body>

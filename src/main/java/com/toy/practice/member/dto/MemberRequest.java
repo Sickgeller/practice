@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRequest {
@@ -32,6 +33,7 @@ public class MemberRequest {
         @Email(message = "올바른 이메일 형식이 아닙니다.")
         private String email;
     }
+
     @Getter
     public static class Login {
         @NotBlank(message = "아이디를 입력해주세요")
@@ -42,6 +44,8 @@ public class MemberRequest {
     }
 
     @Getter
+    @Setter
+    @NoArgsConstructor
     public static class Update {
         @NotBlank
         @Size(min = 2, max = 8, message = "이름은 2자이상 8자 이하로 입력해주세요")
@@ -52,5 +56,4 @@ public class MemberRequest {
         @Size(max = 100, message = "이메일은 100자 이내로 작성해주세요")
         private String email;
     }
-
 }
