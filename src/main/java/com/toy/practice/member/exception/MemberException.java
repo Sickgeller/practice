@@ -24,4 +24,6 @@ public class MemberException extends BusinessException {
     public static MemberException memberNotFound() {
         return new MemberException(ErrorCode.MEMBER_NOT_FOUND);
     }
+
+    public static MemberException invalidPassword(){return new MemberException(ErrorCode.INVALID_PASSWORD); }
 }

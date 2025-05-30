@@ -35,6 +35,7 @@ public class MemberRequest {
     }
 
     @Getter
+    @Setter
     public static class Login {
         @NotBlank(message = "아이디를 입력해주세요")
         private String id;

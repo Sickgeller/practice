@@ -8,7 +8,6 @@ public class SecurityException extends BusinessException {
     protected SecurityException(ErrorCode errorCode) {
         super(errorCode);
     }
-
     protected SecurityException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }

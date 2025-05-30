@@ -1,109 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>로그인</title>
-    <style>
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        .btn-login {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .btn-register {
-            background-color: #2196F3;
-            color: white;
-        }
-        .error-message {
-            color: red;
-            margin-top: 10px;
-            display: none;
-        }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/fragments/header :: header"></head>
 <body>
-    <div class="container">
-        <h1>로그인</h1>
-        <form id="login-form">
-            <div class="form-group">
-                <label for="id">아이디:</label>
-                <input type="text" id="id" name="id" required>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Practice</h1>
+                <nav class="nav">
+                    <a th:href="@{/}" class="nav-link">홈</a>
+                    <a th:href="@{/boards}" class="nav-link">게시판</a>
+                    <a th:href="@{/members/login}" class="nav-link">로그인</a>
+                    <a th:href="@{/members/register}" class="nav-link">회원가입</a>
+                </nav>
             </div>
-            <div class="form-group">
-                <label for="password">비밀번호:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div id="error-message" class="error-message"></div>
-            <button type="submit" class="btn btn-login">로그인</button>
-        </form>
-        <button onclick="location.href='register'" class="btn btn-register">회원가입</button>
-    </div>
+        </div>
+    </header>
 
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const loginData = {
-                id: document.getElementById('id').value,
-                password: document.getElementById('password').value
-            };
-
-            fetch('/api/members/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(loginData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || '로그인에 실패했습니다.');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    window.location.href = 'list';
-                } else {
-                    throw new Error(data.message || '로그인에 실패했습니다.');
-                }
-            })
-            .catch(error => {
-                const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = error.message;
-                errorMessage.style.display = 'block';
-            });
-        });
-    </script>
+    <main class="container mt-5">
+        <div class="card">
+            <h2 class="card-title text-center">로그인</h2>
+            <form th:action="@{/api/members/login}" method="post" class="mt-4">
+                <div class="form-group">
+                    <label class="form-label">아이디</label>
+                    <input type="text" name="id" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">로그인</button>
+                    <a th:href="@{/members/register}" class="btn btn-secondary">회원가입</a>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

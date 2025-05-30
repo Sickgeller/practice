@@ -1,10 +1,12 @@
 package com.toy.practice.member.service;
 
+import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
 import com.toy.practice.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +82,14 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void changePassword(Long memberId, String oldPassword, String newPassword) {
         Member member = findById(memberId);
-        member.changePassword(newPassword);
+
+        String EncodedOldPassword = passwordEncoder.encode(oldPassword);
+        String EncodedNewPassword = passwordEncoder.encode(newPassword);
+
+        if(!passwordEncoder.matches(oldPassword, member.getPassword())){
+            throw MemberException.invalidPassword();
+        }
+        member.changePassword(EncodedNewPassword);
         memberRepository.save(member);
     }
 
@@ -102,14 +111,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member login(String id, String password) {
-        Member member = memberRepository.findById(id)
+    public Member login(MemberRequest.Login request) {
+        Member member = memberRepository.findById(request.getId())
                 .orElseThrow(MemberException::loginFailed);
-
-        if (!member.getPassword().equals(password)) {
+        
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw MemberException.loginFailed();
         }
-
+        
         return member;
     }
 

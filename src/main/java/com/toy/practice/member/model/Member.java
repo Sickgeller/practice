@@ -1,8 +1,11 @@
 package com.toy.practice.member.model;
 
+import com.toy.practice.board.model.Board;
 import com.toy.practice.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 
 @Entity
@@ -21,6 +24,9 @@ import lombok.*;
 )
 public class Member extends BaseEntity {
 
+    /*
+    * Member
+    * */
     @Id 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
     @Column(name = "MEMBER_ID", nullable = false)
@@ -39,6 +45,17 @@ public class Member extends BaseEntity {
     @Builder.Default
     @Column(name = "IS_EMAIL_VERIFIED", nullable = false)
     private boolean emailVerified = false;
+
+    /*
+    * Board
+    * */
+    @OneToMany
+    @JoinColumn(name = "BOARD_ID")
+    private List<Board> boardId;
+
+
+
+
 
     public static Member createMember(String id, String name, String password, String email) {
         return Member.builder()

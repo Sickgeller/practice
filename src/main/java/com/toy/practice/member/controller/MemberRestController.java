@@ -1,9 +1,13 @@
 package com.toy.practice.member.controller;
 
+import com.toy.practice.common.exception.ErrorCode;
 import com.toy.practice.common.response.ApiResponse;
 import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.dto.MemberResponse;
+import com.toy.practice.member.model.Member;
 import com.toy.practice.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,16 +40,26 @@ public class MemberRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<MemberResponse>> login(@RequestBody MemberRequest.Login request) {
-        return ResponseEntity.ok(ApiResponse.success(
-                MemberResponse.from(memberService.login(request.getId(), request.getPassword())),
-                "로그인에 성공했습니다."
-        ));
+    public ResponseEntity<ApiResponse<MemberResponse>> login(@RequestBody MemberRequest.Login request, HttpSession session) {
+        try {
+            Member member = memberService.login(request);
+            MemberResponse loginMember = MemberResponse.from(member);
+            session.setAttribute("loginMember", loginMember);
+            return ResponseEntity.ok(ApiResponse.success(loginMember, "로그인에 성공했습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("아이디 또는 비밀번호가 올바르지 않습니다."));
+        }
     }
 
     @GetMapping("/check-login")
-    public ResponseEntity<ApiResponse<Boolean>> checkLogin() {
-        return ResponseEntity.ok(ApiResponse.success(true, "로그인 상태입니다."));
+    public ResponseEntity<ApiResponse<MemberResponse>> checkLogin(HttpServletRequest request) {
+        MemberResponse loginMember = (MemberResponse) request.getAttribute("loginMember");
+        if (loginMember != null) {
+            return ResponseEntity.ok(ApiResponse.success(loginMember, "로그인 상태입니다."));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("로그인이 필요합니다."));
     }
 
     @GetMapping

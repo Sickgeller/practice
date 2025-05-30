@@ -20,7 +20,8 @@ public enum ErrorCode {
     DUPLICATED_MEMBER_ID(HttpStatus.CONFLICT, "M001", "이미 사용중인 ID입니다."),
     DUPLICATED_MEMBER_EMAIL(HttpStatus.CONFLICT, "M002" , "이미 사용중인 이메일입니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M003", "존재하지 않는 회원입니다."),
-    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "M004", "아이디 또는 비밀번호가 일치하지 않습니다.");
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "M004", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "M005" , "유효하지않은 비밀번호 입니다.");
 
     private final HttpStatus status;
     private final String code;

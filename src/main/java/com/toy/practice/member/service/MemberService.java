@@ -1,12 +1,11 @@
 package com.toy.practice.member.service;
 
+import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface MemberService {
 
     /**
@@ -21,12 +20,11 @@ public interface MemberService {
 
     /**
      * 로그인
-     * @param id 로그인할 아이디
-     * @param password 비밀번호
+     * @param request 로그인할 정보가 담긴
      * @return 로그인한 회원 엔티티
      * @throws MemberException 로그인 실패 시
      */
-    Member login(String id, String password);
+    Member login(MemberRequest.Login request);
 
     /**
      * 모든 회원 조회

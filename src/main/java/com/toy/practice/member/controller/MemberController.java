@@ -2,7 +2,10 @@ package com.toy.practice.member.controller;
 
 import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.dto.MemberResponse;
+import com.toy.practice.member.model.Member;
 import com.toy.practice.member.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,10 +64,12 @@ public class MemberController {
 
     // 로그인 처리
     @PostMapping("/login")
-    public String login(@ModelAttribute MemberRequest.Login request, RedirectAttributes redirectAttributes) {
+    public String login(@ModelAttribute MemberRequest.Login request, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            memberService.login(request.getId(), request.getPassword());
+            Member member = memberService.login(request);
+            MemberResponse memberResponse = MemberResponse.from(member);
             redirectAttributes.addFlashAttribute("message", "로그인에 성공했습니다.");
+            session.setAttribute("loginMember", memberResponse);
             return "redirect:/members/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -74,30 +79,30 @@ public class MemberController {
 
     // 회원 상세보기
     @GetMapping("/detail")
-    public String detail(@RequestParam Long memberId, Model model) {
-        model.addAttribute("member", MemberResponse.from(memberService.findById(memberId)));
+    public String detail() {
         return "members/detail";
     }
 
     // 회원 수정 폼
     @GetMapping("/edit")
-    public String editForm(@RequestParam Long memberId, Model model) {
-        model.addAttribute("member", MemberResponse.from(memberService.findById(memberId)));
+    public String editForm() {
         return "members/edit";
     }
 
     // 회원 수정 처리
     @PostMapping("/edit")
-    public String edit(@RequestParam Long memberId, @ModelAttribute MemberRequest.Update request, RedirectAttributes redirectAttributes) {
+    public String edit(@RequestParam Long memberId, @ModelAttribute MemberRequest.Update request, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             System.out.println(request.getEmail());
             System.out.println(request.getName());
-            memberService.update(memberId, request.getName(), request.getEmail());
+            Member member = memberService.update(memberId, request.getName(), request.getEmail());
+            MemberResponse memberResponse = MemberResponse.from(member);
+            session.setAttribute("loginMember", memberResponse);
             redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
-            return "redirect:/members/detail?memberId=" + memberId;
+            return "redirect:/members/detail";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/members/edit?memberId=" + memberId;
+            return "redirect:/members/edit";
         }
     }
 

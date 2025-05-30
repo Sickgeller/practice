@@ -1,39 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>메인 페이지</title>
-    <style>
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            text-decoration: none;
-            color: white;
-        }
-        .btn-login { background-color: #4CAF50; }
-        .btn-register { background-color: #2196F3; }
-        .btn-list { background-color: #607D8B; }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/fragments/header :: header"></head>
 <body>
-    <div class="container">
-        <h1>회원 관리 시스템</h1>
-        <div>
-            <a href="members/login" class="btn btn-login">로그인</a>
-            <a href="members/register" class="btn btn-register">회원가입</a>
-            <a href="members" class="btn btn-list">회원 목록</a>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Practice</h1>
+                <nav class="nav">
+                    <a th:href="@{/}" class="nav-link">홈</a>
+                    <a th:href="@{/boards}" class="nav-link">게시판</a>
+                    <a th:href="@{/members/login}" class="nav-link">로그인</a>
+                    <a th:href="@{/members/register}" class="nav-link">회원가입</a>
+                </nav>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <main class="container mt-5">
+        <div class="card">
+            <h2 class="card-title">환영합니다!</h2>
+            <p>이 웹사이트는 Spring Boot와 Thymeleaf를 사용한 연습 프로젝트입니다.</p>
+        </div>
+    </main>
 </body>
 </html>
