@@ -1,13 +1,13 @@
 package com.toy.practice.member.dto;
 
-import com.toy.practice.member.model.Member;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberResponse {
 
     private Long memberId;
@@ -18,18 +18,5 @@ public class MemberResponse {
     private Boolean emailVerified;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
-
-    public static MemberResponse from(Member member){
-            return MemberResponse.builder()
-                    .memberId(member.getMemberId())
-                    .id(member.getId())
-                    .name(member.getName())
-                    .email(member.getEmail())
-                    .active(member.isActive())
-                    .emailVerified(member.isEmailVerified())
-                    .createdAt(member.getCreatedAt())
-                    .updateAt(member.getUpdateAt())
-                    .build();
-    }
 
 }
