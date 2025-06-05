@@ -10,9 +10,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(
         name = "MEMBER"
 )
@@ -52,19 +52,6 @@ public class Member extends BaseEntity {
     @OneToMany
     @JoinColumn(name = "BOARD_ID")
     private List<Board> boardId;
-
-
-
-
-
-    public static Member createMember(String id, String name, String password, String email) {
-        return Member.builder()
-                .id(id)
-                .name(name)
-                .password(password)
-                .email(email)
-                .build();
-    }
 
     public void activate(){
         this.active = true;

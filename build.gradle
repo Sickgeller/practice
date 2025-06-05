@@ -26,12 +26,18 @@ repositories {
 	mavenCentral()
 }
 
+tasks.withType(JavaCompile).configureEach {
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final' // 최신 버전 사용
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	
 	// Database
 //	runtimeOnly 'com.h2database:h2'
@@ -43,16 +49,12 @@ dependencies {
 	
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	
-	// Oracle JDBC Driver
-	implementation 'com.oracle.database.jdbc:ojdbc8:21.9.0.0'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 }

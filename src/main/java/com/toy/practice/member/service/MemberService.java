@@ -1,6 +1,5 @@
 package com.toy.practice.member.service;
 
-import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
 
@@ -10,21 +9,18 @@ public interface MemberService {
 
     /**
     * 새 회원 등록
-    * @param id 아이디
-    * @param name 이름
-    * @param password 비번
-    * @param email 이메일
-    * @return 등록된 member 고유 Id
+    * @param member 등록할 회원
     * */
-    Long register(String id, String name, String email, String password);
+    void register(Member member);
 
     /**
      * 로그인
-     * @param request 로그인할 정보가 담긴
+     *
+     * @param member 로그인할 정보가 담긴 member
      * @return 로그인한 회원 엔티티
      * @throws MemberException 로그인 실패 시
      */
-    Member login(MemberRequest.Login request);
+    Member login(Member member);
 
     /**
      * 모든 회원 조회
@@ -47,7 +43,6 @@ public interface MemberService {
      * @throws MemberException 존재X 회원
      * */
     Member findById(String id);
-
     /**
      *  이메일로 검색
      * @param email
@@ -59,12 +54,10 @@ public interface MemberService {
 
     /**
      * 회원 정보 수정
-     * @param memberId 수정할 회원의 Id
-     * @param name 새로운 이름
-     * @param email 새로운 이메일
+     * @param member 수정할 정보가 담긴 도메인
      * @return 수정된 회원 엔티티
      */
-    Member update(Long memberId, String name, String email);
+    Member update(Member member);
 
     /**
      * 회원 삭제
@@ -106,4 +99,10 @@ public interface MemberService {
      */
     boolean existsById(String id);
 
+    /**
+     * 아이디 중복 체크
+     * @param memberId 체크할 아이디
+     * @return 아이디가 이미 존재하면 true, 아니면 false
+     */
+    boolean existsById(Long memberId);
 }

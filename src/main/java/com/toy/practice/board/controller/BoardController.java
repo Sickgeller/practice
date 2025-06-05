@@ -21,6 +21,12 @@ public class BoardController {
     @Autowired
     private final BoardService boardService;
 
+    public String list(Model model){
+        List<BoardResponse> boards = boardService.getBoards(1,10);
+        model.addAttribute("boards", boards);
+        return "boards/list";
+    }
+
     public String list(Model model, @RequestParam int page,@RequestParam int size){
         List<BoardResponse> boards = boardService.getBoards(page, size);
         model.addAttribute("boards", boards);

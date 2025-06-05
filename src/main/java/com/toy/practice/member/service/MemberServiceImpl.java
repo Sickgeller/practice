@@ -1,17 +1,17 @@
 package com.toy.practice.member.service;
 
-import com.toy.practice.member.dto.MemberRequest;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.model.Member;
 import com.toy.practice.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -22,11 +22,34 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Long register(String id, String name, String email, String password) {
-        String newPassword = passwordEncoder.encode(password);
-        validateDuplicateMember(id, email);
-        Member member = Member.createMember(id, name, newPassword, email);
-        return memberRepository.save(member).getMemberId();
+    public void register(Member member) {
+        log.info("회원가입 시작 - ID: {}", member.getId());
+        validateIdDuplicate(member.getId());
+        validateEmailDuplicate(member.getEmail());
+        
+        log.debug("비밀번호 인코딩 시작");
+        String newPassword = passwordEncoder.encode(member.getPassword());
+        member.changePassword(newPassword);
+        log.debug("비밀번호 인코딩 완료");
+        
+        memberRepository.save(member);
+        log.info("회원가입 완료 - ID: {}", member.getId());
+    }
+
+    private void validateIdDuplicate(String id) {
+        log.debug("ID 중복 체크 - ID: {}", id);
+        if(memberRepository.existsById(id)) {
+            log.warn("ID 중복 발견 - ID: {}", id);
+            throw MemberException.duplicatedMemberId();
+        }
+    }
+
+    private void validateEmailDuplicate(String email) {
+        log.debug("이메일 중복 체크 - Email: {}", email);
+        if(memberRepository.existsByEmail(email)){
+            log.warn("이메일 중복 발견 - Email: {}", email);
+            throw MemberException.duplicatedMemberEmail();
+        }
     }
 
     @Override
@@ -47,7 +70,6 @@ public class MemberServiceImpl implements MemberService {
     public Member findById(String id) {
         return memberRepository.findById(id)
                 .orElseThrow(MemberException::memberNotFound);
-
     }
 
     @Override
@@ -59,16 +81,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member update(Long memberId, String name, String email) {
-        Member member = findById(memberId);
-        
+    public Member update(Member member) {
+        Member foundMember = findById(member.getMemberId());
         // 이메일 중복 체크 (다른 회원의 이메일과 중복되는지)
-        if (!member.getEmail().equals(email) && memberRepository.existsByEmail(email)) {
+        if (!member.getEmail().equals(foundMember.getEmail()) && memberRepository.existsByEmail(member.getEmail())) {
             throw MemberException.duplicatedMemberEmail();
         }
-
-        member.update(name, email);
-        return memberRepository.save(member);
+        foundMember.update(member.getName(), member.getEmail());
+        return foundMember;
     }
 
     @Override
@@ -83,13 +103,11 @@ public class MemberServiceImpl implements MemberService {
     public void changePassword(Long memberId, String oldPassword, String newPassword) {
         Member member = findById(memberId);
 
-        String EncodedOldPassword = passwordEncoder.encode(oldPassword);
-        String EncodedNewPassword = passwordEncoder.encode(newPassword);
-
         if(!passwordEncoder.matches(oldPassword, member.getPassword())){
             throw MemberException.invalidPassword();
         }
-        member.changePassword(EncodedNewPassword);
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        member.changePassword(encodedNewPassword);
         memberRepository.save(member);
     }
 
@@ -111,15 +129,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member login(MemberRequest.Login request) {
-        Member member = memberRepository.findById(request.getId())
-                .orElseThrow(MemberException::loginFailed);
+    public Member login(Member member) {
+        log.info("로그인 시도 - ID: {}", member.getId());
+        Member foundMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> {
+                    log.warn("로그인 실패 - 존재하지 않는 ID: {}", member.getId());
+                    return MemberException.loginFailed();
+                });
         
-        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+        if (!passwordEncoder.matches(member.getPassword(), foundMember.getPassword())) {
+            log.warn("로그인 실패 - 비밀번호 불일치 - ID: {}", member.getId());
             throw MemberException.loginFailed();
         }
-        
-        return member;
+        log.info("로그인 성공 - ID: {}", member.getId());
+        return foundMember;
     }
 
     @Override
@@ -132,12 +155,9 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsById(id);
     }
 
-    private void validateDuplicateMember(String id, String email) {
-        if(memberRepository.existsById(id)){
-            throw MemberException.duplicatedMemberId();
-        }
-        if(memberRepository.existsByEmail(email)){
-            throw MemberException.duplicatedMemberEmail();
-        }
+    @Override
+    public boolean existsById(Long memberId) {
+        return memberRepository.existsById(memberId);
     }
+
 }

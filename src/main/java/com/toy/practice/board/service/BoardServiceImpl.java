@@ -17,7 +17,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardResponse> getBoards(int page, int size) {
-        boardRepository.findAll();
-        return List.of();
+        return null;
+//        return boardRepository.findAll().stream().collect(BoardResponse::from);
     }
 }
