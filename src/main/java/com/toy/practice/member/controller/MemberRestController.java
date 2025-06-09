@@ -54,7 +54,7 @@ public class MemberRestController {
         log.info("회원 정보 수정 요청");
         try {
             MemberResponse memberResponse = memberAppService.update(request);
-            sessionSetUp(session, memberResponse);
+
             getOk(redirectAttributes, "회원 정보가 수정되었습니다.");
             log.info("회원 정보 수정 성공");
             return "redirect:/members/detail";
@@ -65,49 +65,9 @@ public class MemberRestController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<MemberResponse>> login(@RequestBody MemberLoginRequest request, HttpSession session) {
-        log.info("REST 로그인 요청 - ID: {}", request.getId());
-        try {
-            // Spring Security 인증 처리
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getId(), request.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            
-            // 인증된 사용자 정보 조회
-            Member member = memberService.findById(request.getId());
-            MemberResponse memberResponse = memberMapper.toDto(member);
-            
-            // 세션에 사용자 정보 저장
-            session.setAttribute("loginMember", memberResponse);
-            
-            log.info("REST 로그인 성공 - ID: {}", request.getId());
-            return getOk(memberResponse, "로그인에 성공했습니다.");
-        } catch (BadCredentialsException e) {
-            log.error("REST 로그인 실패 - 잘못된 인증 정보: {}", e.getMessage());
-            return getBadRequest("아이디 또는 비밀번호가 일치하지 않습니다.");
-        } catch (UsernameNotFoundException e) {
-            log.error("REST 로그인 실패 - 존재하지 않는 사용자: {}", e.getMessage());
-            return getBadRequest("존재하지 않는 사용자입니다.");
-        } catch (Exception e) {
-            log.error("REST 로그인 실패 - 예상치 못한 오류: {}", e.getMessage());
-            return getInternalException(e);
-        }
-    }
 
-    @GetMapping("/check-login")
-    public ResponseEntity<ApiResponse<MemberResponse>> checkLogin(HttpServletRequest request) {
-        log.debug("REST 로그인 상태 확인 요청");
-        MemberResponse loginMember = (MemberResponse) request.getAttribute("loginMember");
-        if (loginMember != null) {
-            log.debug("로그인 상태 확인 - ID: {}", loginMember.getId());
-            return getOk(loginMember, "로그인 상태입니다.");
-        }
-        log.debug("로그인 상태 아님");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("로그인이 필요합니다."));
-    }
+
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteMember(@ModelAttribute MemberDeleteRequest request, HttpSession session) {
@@ -126,10 +86,6 @@ public class MemberRestController {
         }
     }
 
-    private void sessionSetUp(HttpSession session, MemberResponse member) {
-        log.debug("세션 설정 - memberId: {}", member.getMemberId());
-        session.setAttribute("loginMember", member);
-    }
 
     private <T> ResponseEntity<ApiResponse<T>> getOk(T data, String message) {
         log.debug("성공 응답 생성 - 메시지: {}", message);
