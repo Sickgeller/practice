@@ -53,6 +53,11 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "BOARD_ID")
     private List<Board> boardId;
 
+
+    /**
+     * Method
+     */
+
     public void activate(){
         this.active = true;
     }

@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 public class MemberSignUpRequest {
 
     @NotBlank(message = "아이디를 입력해주세요.")
