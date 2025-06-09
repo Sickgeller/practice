@@ -28,6 +28,9 @@ repositories {
 
 tasks.withType(JavaCompile).configureEach {
 	options.annotationProcessorPath = configurations.annotationProcessor
+	options.compilerArgs += [
+		'-Amapstruct.defaultComponentModel=spring'
+	]
 }
 
 dependencies {
@@ -36,17 +39,21 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	//mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final' // 최신 버전 사용
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-	
+
+	// MapStruct + Lombok 통합
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
 	// Database
 //	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	
+
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.h2database:h2'

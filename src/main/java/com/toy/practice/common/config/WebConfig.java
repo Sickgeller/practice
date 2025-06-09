@@ -1,4 +1,4 @@
-package com.toy.practice.config;
+package com.toy.practice.common.config;
 
 import com.toy.practice.common.interceptor.SessionInterceptor;
 import org.springframework.context.annotation.Configuration;

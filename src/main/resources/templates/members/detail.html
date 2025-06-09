@@ -32,8 +32,8 @@
                         </table>
                     </div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a th:href="@{/members/{id}/edit(id=${member.id})}" class="btn btn-primary">수정</a>
-                        <button type="button" class="btn btn-danger" th:onclick="'deleteMember(' + ${member.id} + ')'">삭제</button>
+                        <a th:href="@{/members/edit}" class="btn btn-primary">수정</a>
+                        <button type="button" class="btn btn-danger" th:data-id="${member.id}" onclick="deleteMember(this.dataset.id)">삭제</button>
                         <a href="/members/list" class="btn btn-outline-secondary">목록으로</a>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
             }
 
             try {
-                const response = await fetch(`/api/members/${id}`, {
+                const response = await fetch(`/api/members/delete/${id}`, {
                     method: 'DELETE'
                 });
 

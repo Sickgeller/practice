@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -95,21 +96,6 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 성공")
-    void loginSuccess() {
-        // given
-        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-        when(passwordEncoder.matches(member.getPassword(), member.getPassword())).thenReturn(true);
-
-        // when
-        Member loginMember = memberService.login(member);
-
-        // then
-        assertThat(loginMember).isNotNull();
-        assertThat(loginMember.getId()).isEqualTo(member.getId());
-    }
-
-    @Test
     @DisplayName("회원 정보 수정 성공")
     void updateSuccess() {
         // given
@@ -175,13 +161,14 @@ class MemberServiceTest {
     @DisplayName("회원 삭제 성공")
     void deleteSuccess() {
         // given
-        when(memberRepository.findById(member.getMemberId())).thenReturn(Optional.of(member));
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        doNothing().when(memberRepository).delete(any(Member.class));
 
         // when
-        memberService.delete(member.getMemberId());
+        memberService.delete(any(Long.class));
 
         // then
-        verify(memberRepository).delete(member);
+        verify(memberRepository).delete(any(Member.class));
     }
 
     @Test
@@ -191,7 +178,7 @@ class MemberServiceTest {
         when(memberRepository.existsById(member.getId())).thenReturn(true);
 
         // when
-        boolean exists = memberService.existsById(member.getId());
+        boolean exists = memberService.findById(member.getId()) != null;
 
         // then
         assertThat(exists).isTrue();

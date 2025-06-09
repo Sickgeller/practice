@@ -2,19 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="layout/fragments/header :: header"></head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1>Practice</h1>
-                <nav class="nav">
-                    <a th:href="@{/}" class="nav-link">홈</a>
-                    <a th:href="@{/boards}" class="nav-link">게시판</a>
-                    <a th:href="@{/members/login}" class="nav-link">로그인</a>
-                    <a th:href="@{/members/register}" class="nav-link">회원가입</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <div th:replace="~{layout/fragments/nav :: nav}"></div>
 
     <main class="container mt-5">
         <div class="card">
