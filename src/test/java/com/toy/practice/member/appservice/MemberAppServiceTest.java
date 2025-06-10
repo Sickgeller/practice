@@ -1,6 +1,9 @@
 package com.toy.practice.member.appservice;
 
-import com.toy.practice.member.dto.*;
+import com.toy.practice.member.dto.MemberLoginRequest;
+import com.toy.practice.member.dto.MemberResponse;
+import com.toy.practice.member.dto.MemberSignUpRequest;
+import com.toy.practice.member.dto.MemberUpdateRequest;
 import com.toy.practice.member.exception.MemberException;
 import com.toy.practice.member.mapper.MemberMapper;
 import com.toy.practice.member.model.Member;
@@ -11,10 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Transactional
@@ -41,12 +39,6 @@ class MemberAppServiceTest {
     @Autowired
     private MemberMapper memberMapper;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     private Member member;
     private MemberSignUpRequest signUpRequest;
     private MemberLoginRequest loginRequest;
@@ -58,7 +50,7 @@ class MemberAppServiceTest {
 
         member = Member.builder()
                 .id("testId")
-                .password(passwordEncoder.encode("testPassword"))
+                .password("testPassword")
                 .name("테스트")
                 .email("test@test.com")
                 .build();
@@ -88,14 +80,11 @@ class MemberAppServiceTest {
         memberAppService.register(signUpRequest);
 
         // when
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getId(), loginRequest.getPassword())
-        );
+        MemberResponse loginMember = memberAppService.login(loginRequest);
 
         // then
-        assertThat(authentication).isNotNull();
-        assertThat(authentication.isAuthenticated()).isTrue();
-        assertThat(authentication.getName()).isEqualTo(signUpRequest.getId());
+        assertThat(loginMember).isNotNull();
+        assertThat(loginMember.getId()).isEqualTo(signUpRequest.getId());
     }
 
     @Test
@@ -109,14 +98,9 @@ class MemberAppServiceTest {
         );
 
         // when & then
-        assertThatThrownBy(() -> 
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    wrongPasswordRequest.getId(), 
-                    wrongPasswordRequest.getPassword()
-                )
-            )
-        ).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> memberAppService.login(wrongPasswordRequest))
+                .isInstanceOf(MemberException.class)
+                .hasMessageContaining("아이디 또는 비밀번호가 일치하지 않습니다.");
     }
 
     @Test
@@ -129,14 +113,9 @@ class MemberAppServiceTest {
         );
 
         // when & then
-        assertThatThrownBy(() -> 
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    nonExistentRequest.getId(), 
-                    nonExistentRequest.getPassword()
-                )
-            )
-        ).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> memberAppService.login(nonExistentRequest))
+                .isInstanceOf(MemberException.class)
+                .hasMessageContaining("아이디 또는 비밀번호가 일치하지 않습니다.");
     }
 
     @Test
@@ -161,10 +140,10 @@ class MemberAppServiceTest {
     @Test
     @DisplayName("존재하지 않는 회원 조회")
     void findMemberByIdFail() {
-        // given
-        MemberFindByIdRequest request = new MemberFindByIdRequest("nonExistentId");
         // when & then
-        assertThatThrownBy(() -> memberAppService.findById(request)).isInstanceOf(MemberException.class);
+        assertThatThrownBy(() -> memberAppService.findById("nonExistentId"))
+                .isInstanceOf(MemberException.class)
+                .hasMessageContaining("존재하지 않는 회원입니다.");
     }
 
     @Test
@@ -174,7 +153,7 @@ class MemberAppServiceTest {
         memberAppService.register(signUpRequest);
 
         // when
-        MemberResponse foundMember = memberAppService.findById(new MemberFindByIdRequest(signUpRequest.getId()));
+        MemberResponse foundMember = memberAppService.findById(signUpRequest.getId());
 
         // then
         assertThat(foundMember).isNotNull();

@@ -1,5 +1,6 @@
 package com.toy.practice.common.exception;
 
+import com.toy.practice.common.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

@@ -127,7 +127,24 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
     }
 
-//    }
+    @Override
+    @Transactional
+    public Member login(Member member) {
+        log.info("admin 비번 : {}" , passwordEncoder.encode("admin"));
+        log.info("로그인 시도 - ID: {}", member.getId());
+        Member foundMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> {
+                    log.warn("로그인 실패 - 존재하지 않는 ID: {}", member.getId());
+                    return MemberException.loginFailed();
+                });
+        
+        if (!passwordEncoder.matches(member.getPassword(), foundMember.getPassword())) {
+            log.warn("로그인 실패 - 비밀번호 불일치 - ID: {}", member.getId());
+            throw MemberException.loginFailed();
+        }
+        log.info("로그인 성공 - ID: {}", member.getId());
+        return foundMember;
+    }
 
     @Override
     public boolean existsByEmail(String email) {

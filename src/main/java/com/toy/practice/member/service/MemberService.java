@@ -13,10 +13,14 @@ public interface MemberService {
     * */
     void register(Member member);
 
-//    /**
-//     * 로그인
-//     *
-//     * @param member 로그인할 정보가 담긴 member
+    /**
+     * 로그인
+     *
+     * @param member 로그인할 정보가 담긴 member
+     * @return 로그인한 회원 엔티티
+     * @throws MemberException 로그인 실패 시
+     */
+    Member login(Member member);
 
     /**
      * 모든 회원 조회
@@ -33,13 +37,12 @@ public interface MemberService {
     Member findById(Long memberId);
 
     /**
-    * 회원 상세 정보 조회
-    * @param id 로그인용 id
-    * @return 조회할 회원의 엔티티
-    * @throws MemberException 존재X 회원
-    * */
+     * 회원 상세 정보 조회
+     * @param id 조회할 회원의 Id
+     * @return 조회할 회원의 엔티티
+     * @throws MemberException 존재X 회원
+     * */
     Member findById(String id);
-
     /**
      *  이메일로 검색
      * @param email

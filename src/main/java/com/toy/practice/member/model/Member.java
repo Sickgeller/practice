@@ -2,6 +2,7 @@ package com.toy.practice.member.model;
 
 import com.toy.practice.board.model.Board;
 import com.toy.practice.common.base.BaseEntity;
+import com.toy.practice.common.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,17 +47,17 @@ public class Member extends BaseEntity {
     @Column(name = "IS_EMAIL_VERIFIED", nullable = false)
     private boolean emailVerified = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ROLETYPE", nullable = false)
+    @Builder.Default
+    private RoleType roletype = RoleType.USER;
+
     /*
     * Board
     * */
     @OneToMany
     @JoinColumn(name = "BOARD_ID")
     private List<Board> boardId;
-
-
-    /**
-     * Method
-     */
 
     public void activate(){
         this.active = true;
