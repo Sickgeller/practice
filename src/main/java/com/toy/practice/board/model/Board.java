@@ -1,5 +1,7 @@
 package com.toy.practice.board.model;
 
+import com.toy.practice.board.dto.BoardCreateRequest;
+import com.toy.practice.category.model.BoardCategory;
 import com.toy.practice.common.base.BaseEntity;
 import com.toy.practice.member.model.Member;
 import jakarta.persistence.*;
@@ -41,13 +43,14 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "MEMBER_ID", nullable = false, updatable = false, insertable = false)
     private Member member;
 
-    public static Board createBoard(String title, String content, Member member) {
-        return Board.builder()
-                .title(title)
-                .content(content)
-                .member(member)
-                .build();
-    }
+
+    /**
+     * boardCategory
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false, updatable = false, insertable = false)
+    private BoardCategory boardCategory;
+
 
     public void update(String title, String content) {
         this.title = title;

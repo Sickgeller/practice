@@ -1,7 +1,7 @@
 package com.toy.practice.member.exception;
 
 import com.toy.practice.common.exception.BusinessException;
-import com.toy.practice.common.exception.ErrorCode;
+import com.toy.practice.common.enums.ErrorCode;
 
 public class MemberException extends BusinessException {
 

@@ -1,4 +1,4 @@
-package com.toy.practice.common.config;
+package com.toy.practice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

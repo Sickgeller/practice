@@ -11,9 +11,9 @@ public interface MemberAppService {
 
     void register(MemberSignUpRequest request);
 
+    MemberResponse login(MemberLoginRequest request);
+
     MemberResponse update(MemberUpdateRequest request);
 
-    MemberResponse findById(MemberFindByIdRequest request);
-
-    void deleteMember(MemberDeleteRequest request);
+    MemberResponse findById(String id);
 }

@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout/fragments/header :: header"></head>
+<head th:replace="~{layout/fragments/header :: header}"></head>
 <body>
-    <div th:replace="~{layout/fragments/nav :: nav}"></div>
-
+    <div th:replace="~{layout/fragments/nav :: nav }"></div>
     <main class="container mt-5">
         <div class="card">
             <h2 class="card-title">환영합니다!</h2>

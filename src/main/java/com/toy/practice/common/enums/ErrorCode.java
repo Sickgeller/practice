@@ -1,4 +1,4 @@
-package com.toy.practice.common.exception;
+package com.toy.practice.common.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.toy.practice.member.dto;
+package com.toy.practice.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberDeleteRequest {
-    private Long memberId;
-    private String id;
+public class BoardCategoryResponse {
+    private Long categoryId;
+    private String categoryName;
 }

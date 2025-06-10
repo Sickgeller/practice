@@ -22,7 +22,7 @@ public class SessionInterceptor implements HandlerInterceptor {
             if (session == null || session.getAttribute("loginMember") == null) {
                 log.info("미인증 사용자 요청");
                 // 로그인으로 redirect
-                response.sendRedirect("/members/login?redirectURL=" + requestURI);
+                response.sendRedirect("/members/login");
                 return false;
             }
         }
@@ -45,14 +45,21 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        log.debug("postHandle 실행 - URI: {}", request.getRequestURI());
         if (modelAndView != null) {
             HttpSession session = request.getSession(false);
+            log.debug("세션 존재 여부: {}", session != null);
             if (session != null) {
                 MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+                log.debug("loginMember 존재 여부: {}", loginMember != null);
                 if (loginMember != null) {
+                    log.debug("세션 정보 모델에 추가 - memberId: {}, name: {}", loginMember.getMemberId(), loginMember.getName());
                     modelAndView.addObject("member", loginMember);
+                    log.debug("모델에 추가된 member 객체: {}", modelAndView.getModel().get("member"));
                 }
             }
+        } else {
+            log.debug("modelAndView가 null입니다.");
         }
     }
 
@@ -61,9 +68,7 @@ public class SessionInterceptor implements HandlerInterceptor {
      */
     private boolean isLoginCheckPath(String requestURI) {
         return requestURI.startsWith("/members/detail") ||
-               requestURI.startsWith("/members/edit") ||
-               requestURI.startsWith("/boards/write") ||
-               requestURI.startsWith("/boards/edit");
+               requestURI.startsWith("/members/edit");
     }
 
     /**
@@ -78,7 +83,6 @@ public class SessionInterceptor implements HandlerInterceptor {
      * 관리자 권한 확인
      */
     private boolean isAdmin(MemberResponse member) {
-        // TODO: MemberResponse에 role 필드 추가 후 실제 권한 체크 로직 구현
-        return false;
+        return member.getRole().name().equals("ADMIN");
     }
 } 

@@ -23,8 +23,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByEmail(String email);
 
     /**
-     * 로그인용 id(컬럼명: ID, 필드명: id)로 멤버 검색
-     * @param id 로그인용 아이디
+     * 순수 멤버 Id로 검색
+     * @param memberId 검색할 memberId
+     * @return 검색된 멤버
+     */
+    Optional<Member> findByMemberId(Long memberId);
+
+    /**
+     * 그냥 Id로 멤버 검색
+     *
+     * @param id 존재하는지 확인할 아이디
      * @return 검색된 멤버
      */
     Optional<Member> findById(String id);

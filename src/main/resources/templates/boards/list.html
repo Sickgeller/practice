@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>게시글</title>
-</head>
+  <head th:replace="~{layout/fragments/header :: header}"></head>
+  <div th:replace="~{layout/fragments/nav :: nav}"></div>
 <body>
-<th:block th:if="${boards != null}">
   <table>
     <thead>
       <tr>
@@ -15,21 +12,26 @@
         <th>작성일</th>
       </tr>
     </thead>
-    <tbody>
+        <tbody>
+        <button onclick="location.href='boards/write'">글쓰기</button>
+        <th:block th:if="${!#lists.isEmpty(boards)}">
 
-      <tr th:each="board : ${boards}">
-        <a th:href="@{/boards/detail(boardId = ${board.boardId})}">
-          <td th:text="${board.boardId}"></td>
-          <td th:text="${board.title}"></td>
-          <td th:text="${board.id}"></td>
-          <td th:text="${board.createdAt}"></td>
-        </a>
-      </tr>
-    </tbody>
+          <tr th:each="board : ${boards}">
+            <a th:href="@{/boards/detail(boardId = ${board.boardId})}">
+              <td th:text="${board.boardId}"></td>
+              <td th:text="${board.title}"></td>
+              <td th:text="${board.id}"></td>
+              <td th:text="${board.createdAt}"></td>
+            </a>
+          </tr>
+
+    </th:block>
+    <th:block th:unless="${!#lists.isEmpty(boards)}">
+      <td th:colspan="4">
+        <span>표시할 게시글이 없습니다.</span>
+      </td>
+    </th:block>
+        </tbody>
   </table>
-</th:block>
-<th:block th:unless="${boards != null}">
-  <span>표시할 게시글이 없습니다.</span>
-</th:block>
 </body>
 </html>
